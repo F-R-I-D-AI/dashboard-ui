@@ -11,9 +11,9 @@
   <br>
   <a href="https://fridai.vercel.app/"><strong>Open Live Demo »</strong></a>
   <br><br>
-  <a href="https://github.com/F-R-I-D-AI/dashboard-ui/issues/new?labels=bug&template=bug_report.yml">버그 신고</a>
+  <a href="https://github.com/F-R-I-D-AI/dashboard-ui/issues/new?labels=bug&template=bug_report.yml">Report bug</a>
   ·
-  <a href="https://github.comF-R-I-D-AI/dashboard-ui/issues/new?labels=enhancement&template=feature_request.yml">기능 제안</a>
+  <a href="https://github.comF-R-I-D-AI/dashboard-ui/issues/new?labels=enhancement&template=feature_request.yml">Request feature</a>
 </p>
 
 ---
