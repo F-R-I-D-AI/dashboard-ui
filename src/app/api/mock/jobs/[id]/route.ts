@@ -1,46 +1,51 @@
 // app/api/mock/jobs/[id]/route.ts
 import { NextResponse } from "next/server";
+import { getJobInfo } from "../../enhance/route";
+import { AFTER_FACE_BOXES } from "../../_data/faces";
 
-let counter: Record<string, number> = {};
+const counter: Record<string, number> = {};
 
 export async function GET(
   req: Request,
   context: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await context.params;   // ★★★ 핵심: await로 params 풀기
+  const { id } = await context.params;
   const jobId = id;
 
   counter[jobId] ??= 0;
   counter[jobId]++;
 
-  // 1) queued
+  // STEP 1
   if (counter[jobId] === 1) {
-    return NextResponse.json({
-      job_id: jobId,
-      status: "queued"
-    });
+    return NextResponse.json({ job_id: jobId, status: "queued" });
   }
 
-  // 2) processing
+  // STEP 2
   if (counter[jobId] === 2) {
-    return NextResponse.json({
-      job_id: jobId,
-      status: "processing"
-    });
+    return NextResponse.json({ job_id: jobId, status: "processing" });
   }
 
-  // 3) completed
+  // STEP 3 (completed)
+  const info = getJobInfo(jobId);
+
+  if (!info) {
+    return NextResponse.json({ error: "unknown job" }, { status: 404 });
+  }
+
+  const { prefix, faceEnhance } = info;
+
+  // 결과 파일 이름 결정
+  const resultFile = faceEnhance
+    ? `/mock/${prefix}_out_face.png`
+    : `/mock/${prefix}_out.png`;
+
+  // AFTER 얼굴 박스 결정
+  const faceBoxes = AFTER_FACE_BOXES[prefix] ?? null;
+
   return NextResponse.json({
     job_id: jobId,
     status: "completed",
-    result_url: "/mock/after.png",
-    face_data: {
-      width: 800,
-      height: 600,
-      faces: [
-        { x: 150, y: 160, w: 160, h: 160 },
-        { x: 380, y: 220, w: 140, h: 140 }
-      ]
-    }
+    result_url: resultFile,
+    face_data: faceBoxes
   });
 }

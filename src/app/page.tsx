@@ -23,6 +23,7 @@ export default function Home() {
   const [afterImg, setAfterImg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [imgRatio, setImgRatio] = useState<number | null>(null);
+  const [prefix, setPrefix] = useState<string | null>(null);
 
   const [beforeFaces, setBeforeFaces] = useState<FaceBox[]>([]);
   const [afterFaces, setAfterFaces] = useState<FaceBox[]>([]);
@@ -44,8 +45,12 @@ export default function Home() {
 
   const [dragActive, setDragActive] = useState(false);
 
+  const [useFaceEnhance, setUseFaceEnhance] = useState(true);
+
   const MAX_LONG_EDGE = 2500;
   const MAX_PIXELS = 4500000; // 4.5MP
+
+  const [showPolicy, setShowPolicy] = useState(false);
 
   const loadImageInfo = (url: string) => {
     const img = new Image();
@@ -119,6 +124,9 @@ export default function Home() {
 
   // 업로드 로직 통합 (drag&drop + file input 공용)
   async function handleFileSelect(file: File) {
+    const p = file.name.split(".")[0];
+    setPrefix(p);
+    
     // 이미지 해상도 제한 검사
     const isValid = await checkImageResolution(file);
     if (!isValid) return;
@@ -182,7 +190,8 @@ export default function Home() {
         if (restoredUrl) {
           try {
             const blob = await fetch(restoredUrl).then((r) => r.blob());
-            const restoredFile = new File([blob], "restored.png", { type: "image/png" });
+            const afterFileName = `${prefix}${useFaceEnhance ? "_out_face-enhanced.png" : "_out.png"}`;
+            const restoredFile = new File([blob], afterFileName, { type: "image/png" });
             const detection = await requestFaceDetection(restoredFile);
 
             setAfterFaces(detection.faces);
@@ -229,6 +238,7 @@ export default function Home() {
     try {
       const formData = new FormData();
       formData.append("image", uploadedFile);
+      formData.append("face_enhance", useFaceEnhance ? "true" : "false");
 
       const res = await fetch(`${API_URL_V1}/enhance`, {
         method: "POST",
@@ -301,7 +311,7 @@ export default function Home() {
   return (
     <div className="max-w-6xl mx-auto px-6 py-12 space-y-10">
       <header className="flex items-center justify-between pb-6 border-b border-[var(--border)]">
-        <h1 className="text-xl font-bold tracking-tight">저조도 이미지 복원 웹 서비스 v0.1.3</h1>
+        <h1 className="text-xl font-bold tracking-tight">저조도 이미지 복원 웹 서비스 v0.2.0</h1>
       </header>
 
       {/* DRAG & DROP 영역 포함 업로드 패널 */}
@@ -447,6 +457,18 @@ export default function Home() {
 
           <div className="text-sm text-gray-300 text-center my-2">또는 이미지를 여기에 드래그하세요</div>
 
+          <label className="mt-4 flex items-center gap-2 text-sm text-gray-200 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              className="accent-[var(--accent)]"
+              checked={useFaceEnhance}
+              onChange={(e) => setUseFaceEnhance(e.target.checked)}
+            />
+            <span>
+              Real-ESRFAN <span className="font-semibold">Face Enhancement</span> 사용
+            </span>
+          </label>
+
           <button
             disabled={!beforeImg || loading}
             onClick={runRestore}
@@ -490,6 +512,65 @@ export default function Home() {
                 ))}
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Floating Policy Button */}
+      <button
+        onClick={() => setShowPolicy(true)}
+        className="fixed bottom-4 right-4 px-3 py-1.5 text-xs rounded-md 
+                   bg-[var(--panel)] border border-[var(--border)] text-gray-300 
+                   hover:bg-[var(--accent)]/20 hover:text-white transition-colors shadow-lg"
+      >
+        Privacy Policy
+      </button>
+
+      {/* Policy Modal */}
+      {showPolicy && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999]">
+          <div className="w-[90%] max-w-lg max-h-[80vh] overflow-y-auto 
+                          bg-[var(--panel)] border border-[var(--border)] rounded-xl p-6 relative shadow-2xl">
+            
+            {/* Close Button */}
+            <button
+              onClick={() => setShowPolicy(false)}
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-200"
+            >
+              ✕
+            </button>
+
+            <h2 className="text-lg font-semibold mb-4">Privacy &amp; Data Policy (시연용)</h2>
+
+            <p className="mb-3 text-sm text-gray-300">
+              이 웹 서비스는 <span className="font-medium">저조도 이미지 복원 기술 시연</span>을 위해 운영됩니다.
+              사용자가 업로드한 이미지는 복원 처리를 위해 서버로 전송되며 일시적으로 저장·처리됩니다.
+            </p>
+
+            <ul className="list-disc pl-5 space-y-2 text-sm text-gray-300 mb-4">
+              <li>
+                업로드된 이미지는 오남용 방지 및 장애 분석을 위해 
+                최대 <span className="font-medium">30일간</span> 저장될 수 있습니다.
+              </li>
+              <li>
+                저장된 이미지는 시연 목적 외의 용도로 사용되지 않으며,
+                재학습·마케팅 등 2차 활용은 이루어지지 않습니다.
+              </li>
+              <li>
+                로그 및 이미지는 보관 기간 이후 자동 삭제됩니다.
+              </li>
+              <li>
+                데이터는 운영 인원에게만 제한적으로 접근 가능하며, 제3자와 공유되지 않습니다.
+              </li>
+              <li>
+                사용자는 타인의 초상권·저작권을 침해하지 않는 이미지만 업로드해야 합니다.
+              </li>
+            </ul>
+
+            <p className="text-xs text-gray-400">
+              본 데모는 상용 서비스가 아니며, 시연 환경에서의 기술 검증을 목적으로 합니다.
+              시연 종료 후 관련 로그 및 캐시는 순차적으로 폐기될 수 있습니다. (Last update: 2025-11-30)
+            </p>
           </div>
         </div>
       )}
