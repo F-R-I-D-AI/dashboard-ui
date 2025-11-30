@@ -334,6 +334,32 @@ export default function Home() {
                   }}
                 >
                   <img src={beforeImg} className="absolute inset-0 w-full h-full object-contain" />
+                  {beforeFaces.map((f, idx) => {
+                    if (!sliderRef.current) return null;
+                    const rect = sliderRef.current.getBoundingClientRect();
+                    const { renderW, renderH, offsetX, offsetY } =
+                      getRenderedImageRect(rect, imgMetaBefore.width, imgMetaBefore.height);
+                  
+                    const left = offsetX + f.x * (renderW / imgMetaBefore.width);
+                    const top = offsetY + f.y * (renderH / imgMetaBefore.height);
+                    const w = f.w * (renderW / imgMetaBefore.width);
+                    const h = f.h * (renderH / imgMetaBefore.height);
+                  
+                    return (
+                      <div
+                        key={`b-${idx}`}
+                        className="absolute animate-pulse rounded-sm"
+                        style={{
+                          left,
+                          top,
+                          width: w,
+                          height: h,
+                          border: "3px solid white",
+                          boxShadow: "0 0 14px rgba(255, 255, 255, 1)",
+                        }}
+                      />
+                    );
+                  })}
                 </div>
               )}
 
@@ -347,6 +373,32 @@ export default function Home() {
                     src={afterImg}
                     className="absolute inset-0 w-full h-full object-contain contrast-[1.15] brightness-[1.1] saturate-[1.1]"
                   />
+                  {afterFaces.map((f, idx) => {
+                    if (!sliderRef.current) return null;
+                    const rect = sliderRef.current.getBoundingClientRect();
+                    const { renderW, renderH, offsetX, offsetY } =
+                      getRenderedImageRect(rect, imgMetaAfter.width, imgMetaAfter.height);
+                  
+                    const left = offsetX + f.x * (renderW / imgMetaAfter.width);
+                    const top = offsetY + f.y * (renderH / imgMetaAfter.height);
+                    const w = f.w * (renderW / imgMetaAfter.width);
+                    const h = f.h * (renderH / imgMetaAfter.height);
+                  
+                    return (
+                      <div
+                        key={`a-${idx}`}
+                        className="absolute animate-pulse rounded-sm"
+                        style={{
+                          left,
+                          top,
+                          width: w,
+                          height: h,
+                          border: "3px solid #3b82f6",
+                          boxShadow: "0 0 16px rgba(59, 130, 246, 1)",
+                        }}
+                      />
+                    );
+                  })}
                 </div>
               )}
 
