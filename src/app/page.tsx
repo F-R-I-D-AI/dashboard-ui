@@ -301,7 +301,7 @@ export default function Home() {
   return (
     <div className="max-w-6xl mx-auto px-6 py-12 space-y-10">
       <header className="flex items-center justify-between pb-6 border-b border-[var(--border)]">
-        <h1 className="text-xl font-bold tracking-tight">저조도 이미지 복원 웹 서비스 v0.1.2</h1>
+        <h1 className="text-xl font-bold tracking-tight">저조도 이미지 복원 웹 서비스 v0.1.3</h1>
       </header>
 
       {/* DRAG & DROP 영역 포함 업로드 패널 */}
