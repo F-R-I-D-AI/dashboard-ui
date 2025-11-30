@@ -60,7 +60,7 @@ lowlight-restore-web/
 ### 2. 저조도 + 초해상도 복원 (2단계 파이프라인)
 
 * Retinexformer: 밝기·색상 보정
-* Real-ESRGAN: 디테일 강화 & 노이즈 감소
+* Real-ESRGAN: 디테일 강화 & 노이즈 감소 (+Face enhancement)
 * 비동기 Job Queue 기반 복원 진행
 * 복원 시간 타이머 표시 (ms 단위)
 
