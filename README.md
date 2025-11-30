@@ -7,7 +7,7 @@
 <p align="center">
   Retinexformer 기반 저조도 향상 + Real-ESRGAN 초해상도 복원을<br>
   브라우저에서 간편하게 체험하는 2단계 이미지 복원 웹 서비스입니다.<br><br>
-  <b>v0.1.1 (Preview)</b>
+  <b>v0.2.0 (Preview)</b>
   <br>
   <a href="https://fridai.vercel.app/"><strong>Open Live Demo »</strong></a>
   <br><br>
